@@ -1,0 +1,607 @@
+:root {
+    --paper: #f2efe8;
+    --ink: #111110;
+    --muted: #5a5850;
+    --highlight: #f2c94c;
+    --accent: #ff7a00;
+    --accent-text: #c95a00;
+    --on-accent: #111110;
+    --pad: clamp(20px, 4.5vw, 56px);
+    --fs: 64px;
+    --display: "Host Grotesk";
+    --mono: "Martian Mono";
+    --mono-w: 400;
+    --track: -.04em;
+    --maxw: 1600px;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+}
+
+html, body {
+    height: 100%;
+    overflow: clip;
+}
+
+body {
+    background: var(--paper);
+    color: var(--ink);
+    font: 500 16px/1.4 var(--display), "Helvetica Neue", Arial, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    overflow: hidden;
+}
+
+a {
+    color: inherit;
+}
+
+button {
+    font: inherit;
+    color: inherit;
+}
+
+:focus-visible {
+    outline: 3px solid var(--ink);
+    outline-offset: 3px;
+}
+
+.sr {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+}
+
+.page {
+    position: relative;
+    height: 100svh;
+    width: 100%;
+    max-width: var(--maxw);
+    margin: 0 auto;
+    z-index: 1;
+    display: grid;
+    grid-template-rows: auto minmax(0, 1fr) auto;
+    grid-template-columns: minmax(0, 1fr);
+    padding: var(--pad);
+    padding-bottom: max(var(--pad), env(safe-area-inset-bottom));
+}
+
+.top {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 16px;
+}
+
+.line {
+    margin-top: -.15em;
+    font-weight: 600;
+    font-size: clamp(17px, 2.3svh, 20px);
+    line-height: 1.3;
+    max-width: none;
+    text-wrap: pretty;
+}
+
+.line .w {
+    display: inline-block;
+    white-space: pre;
+}
+
+.bottom {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    gap: 16px;
+}
+
+.links {
+    display: flex;
+    gap: 0 22px;
+    flex-wrap: wrap;
+    font-size: 15px;
+    font-weight: 600;
+}
+
+.links a {
+    display: inline-block;
+    min-height: 44px;
+    line-height: 44px;
+    text-underline-offset: 4px;
+    text-decoration-thickness: 1px;
+}
+
+/* The one toy on the page: a plain outlined button. Pressing it lights a fuse along its bottom edge. */
+.boom-btn {
+    position: relative;
+    flex: none;
+    min-height: 44px;
+    padding: 0 16px;
+    border: 2px solid var(--ink);
+    background: transparent;
+    color: var(--ink);
+    font-weight: 800;
+    font-size: 15px;
+    cursor: pointer;
+    touch-action: manipulation;
+    overflow: visible;
+    transition: background-color 150ms ease, color 150ms ease, border-color 150ms ease;
+}
+
+.boom-btn:hover {
+    background: var(--ink);
+    color: var(--paper);
+}
+
+.boom-btn:active {
+    transform: translateY(1px);
+}
+
+.bb-text {
+    display: inline-block;
+    font-variant-numeric: tabular-nums;
+}
+
+.boom-btn.lit, .boom-btn.lit:hover {
+    background: var(--paper);
+    color: var(--ink);
+    border-color: var(--ink);
+}
+
+.boom-btn.lit .bb-text {
+    color: var(--accent-text);
+}
+
+/* The fuse: the bottom edge burns from right to left, with a spark riding the end. */
+.fuse {
+    position: absolute;
+    left: -2px;
+    right: -2px;
+    bottom: -2px;
+    height: 2px;
+    background: var(--accent);
+    transform-origin: 0 50%;
+    opacity: 0;
+    pointer-events: none;
+}
+
+.spark {
+    position: absolute;
+    left: -2px;
+    bottom: -2px;
+    width: 10px;
+    height: 10px;
+    margin: -4px 0 0 -5px;
+    border-radius: 50%;
+    opacity: 0;
+    pointer-events: none;
+    background: radial-gradient(circle, #fff 0 22%, #ffd257 34%, var(--accent) 58%, transparent 72%);
+}
+
+.boom-btn.lit .fuse, .boom-btn.lit .spark {
+    opacity: 1;
+}
+
+.ring {
+    position: fixed;
+    width: 40px;
+    height: 40px;
+    margin: -20px 0 0 -20px;
+    border: 6px solid var(--accent);
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 50;
+}
+
+/* Stage and card */
+.stage {
+    min-height: 0;
+    display: grid;
+    align-items: center;
+    justify-items: start;
+}
+
+.card {
+    --hand: min(calc(var(--fs) * .6), 12svh);
+    --arrow: clamp(18px, calc(var(--fs) * .22), 30px);
+    --label: clamp(11px, calc(var(--fs) * .15), 16px);
+    position: relative;
+    width: max-content;
+    padding-top: calc(var(--hand) + var(--arrow) + 24px);
+}
+
+.email {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    text-decoration: none;
+}
+
+.seg {
+    position: relative;
+    display: flex;
+    font-weight: 800;
+    font-size: var(--fs);
+    line-height: 1;
+    letter-spacing: var(--track);
+    white-space: nowrap;
+}
+
+.seg + .seg {
+    margin-top: calc(var(--fs) * .12);
+}
+
+/* Tracking is explicit per letter, so single-letter boxes keep it (and the greeting matches). */
+.ch {
+    display: inline-block;
+    letter-spacing: 0;
+    margin-right: var(--track);
+    font-weight: inherit;
+}
+
+.txt {
+    display: inline-flex;
+}
+
+.at {
+    color: var(--accent-text);
+    overflow: visible;
+}
+
+.word {
+    position: relative;
+    display: inline-flex;
+}
+
+.hl {
+    position: absolute;
+    left: -.04em;
+    right: -.02em;
+    bottom: .1em;
+    height: .36em;
+    background: var(--highlight);
+    z-index: -1;
+    transform-origin: 0 50%;
+}
+
+.word, .seg-name {
+    isolation: isolate;
+}
+
+/* Notes: technical leader lines in the accent, mono labels in ink */
+.note {
+    position: absolute;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    font: var(--mono-w) var(--label)/1.2 var(--mono), ui-monospace, monospace;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    white-space: nowrap;
+    color: var(--ink);
+    pointer-events: none;
+}
+
+.note .label {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+}
+
+/* One line weight (--stroke, set from the type size) for the hand, arrows and bracket, with round ends. */
+.note svg, .brace {
+    overflow: visible;
+    fill: none;
+    stroke: var(--accent);
+    stroke-width: 2.6;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
+.brace {
+    stroke-width: var(--stroke, 2px);
+}
+
+.lbl {
+    display: inline-block;
+}
+
+.note .hand {
+    display: block;
+    width: calc(var(--hand) * .86);
+    height: var(--hand);
+    stroke: var(--accent);
+    stroke-width: var(--hand-sw, 1.6);
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    transform-origin: 50% 90%;
+}
+
+.down {
+    height: var(--arrow);
+    width: calc(var(--arrow) * 14 / 38);
+}
+
+.left {
+    display: none;
+    width: calc(var(--arrow) * .9);
+    height: calc(var(--arrow) * .9 * 14 / 34);
+}
+
+.n-wave {
+    bottom: calc(100% + 6px);
+    left: .1em;
+    align-items: center;
+}
+
+.n-me {
+    bottom: calc(100% + 6px);
+    left: 58%;
+}
+
+.n-place {
+    bottom: calc(100% + 6px);
+    left: 32%;
+}
+
+.reach {
+    position: relative;
+    display: block;
+    width: 100%;
+    margin-top: 10px;
+    border: 0;
+    padding: 0;
+    background: none;
+    cursor: pointer;
+    text-align: center;
+    touch-action: manipulation;
+}
+
+.brace {
+    display: block;
+    width: 100%;
+    height: 22px;
+}
+
+.reach-label {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    min-height: 44px;
+    padding: 0 12px;
+    font: var(--mono-w) var(--label)/1 var(--mono), ui-monospace, monospace;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    background: linear-gradient(var(--highlight), var(--highlight)) 0 50% / 100% 1.9em no-repeat;
+}
+
+.copy-ico {
+    width: 14px;
+    height: 14px;
+    fill: none;
+    stroke: var(--ink);
+    stroke-width: 1.6;
+}
+
+/* Wide screens: one line, like the card */
+@media (min-width: 760px) and (min-aspect-ratio: 1/1) {
+    .email {
+        flex-direction: row;
+    }
+
+    .seg + .seg {
+        margin-top: 0;
+    }
+
+    .n-me {
+        left: 46%;
+    }
+
+    .n-place {
+        left: 30%;
+    }
+}
+
+/* Portrait: .co.uk is short, so its note sits beside it */
+@media not (
+
+(
+min-width:
+
+760
+px
+
+)
+and
+
+(
+min-aspect-ratio:
+
+1
+/
+1
+)
+)
+{
+.n-place {
+    bottom: auto;
+    top: 50%;
+    left: calc(100% + 10px);
+    transform: translateY(-50%);
+    flex-direction: row;
+    align-items: center;
+}
+
+.n-place .down {
+    display: none;
+}
+
+.n-place .left {
+    display: block;
+    order: -1;
+}
+
+}
+
+
+/* While the intro runs, the supporting parts wait off stage. */
+body.intro :is(.card, .top > *, .links) {
+    visibility: hidden;
+}
+
+/* The greeting: a separate layer, drawn at full size, whose pieces fly into the address.
+   Its words use the same per-letter boxes as the address, so they land at exactly the same width. */
+.greet {
+    position: fixed;
+    left: 0;
+    top: 0;
+    z-index: 20;
+    pointer-events: none;
+    font-weight: 800;
+    line-height: 1;
+    letter-spacing: var(--track);
+    white-space: nowrap;
+    display: none;
+}
+
+body.greeting .greet {
+    display: block;
+}
+
+.g-line {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    row-gap: .08em;
+}
+
+.g-line + .g-line {
+    margin-top: .08em;
+}
+
+.g-word {
+    display: inline-flex;
+    transform-origin: 0 0;
+}
+
+.fl {
+    position: relative;
+}
+
+.fl > span {
+    display: inline-block;
+}
+
+.fl > .low {
+    position: absolute;
+    left: 0;
+    top: 0;
+    opacity: 0;
+}
+
+.g-comma, .g-im {
+    display: inline-block;
+}
+
+.g-hand {
+    display: inline-block;
+    line-height: 0;
+    margin-left: .2em;
+    transform-origin: 0 0;
+}
+
+.g-arc, .g-wave {
+    display: block;
+}
+
+.g-wave {
+    transform-origin: 50% 90%;
+}
+
+.g-hand svg {
+    display: block;
+    width: calc(.85em * .86);
+    height: .85em;
+    overflow: visible;
+    fill: none;
+    stroke: var(--accent);
+    stroke-width: var(--hand-sw, 1.6);
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
+@media not (
+
+(
+min-width:
+
+760
+px
+
+)
+and
+
+(
+min-aspect-ratio:
+
+1
+/
+1
+)
+)
+{
+.g-im {
+    flex-basis: 100%;
+}
+
+}
+
+/* Hold everything back until the intro starts */
+@keyframes st-unhide {
+    to {
+        visibility: visible;
+    }
+}
+
+.is-pending .page {
+    visibility: hidden;
+    animation: st-unhide 0s 3s forwards;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .is-pending .page {
+        visibility: visible;
+        animation: none;
+    }
+}
+
+/* Background: faint layout columns */
+.bg {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 0;
+    overflow: hidden;
+}
+
+.bg > * {
+    position: absolute;
+    inset: 0;
+}
+
+/* Columns run the full width of the screen. The content is capped, so the grid is drawn as one
+   repeating rhythm, positioned so the content's own columns fall exactly on it. */
+.b-cols {
+    --line: rgba(17, 17, 16, .07);
+    --tint: rgba(17, 17, 16, .012);
+    background-image: repeating-linear-gradient(90deg,
+    var(--line) 0 1px,
+    var(--tint) 1px calc(var(--colw, 100px) - 1px),
+    var(--line) calc(var(--colw, 100px) - 1px) var(--colw, 100px),
+    transparent var(--colw, 100px) calc(var(--colw, 100px) + var(--gap, 20px)));
+    background-position: var(--x0, 0px) 0;
+}
