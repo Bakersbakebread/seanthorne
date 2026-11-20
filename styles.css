@@ -1,18 +1,78 @@
+/* Colours: a different palette on every visit, set as <html data-palette> by the script in <head>.
+   Every palette clears: ink on paper 7:1, ink on highlight 4.5:1, accent on paper 4.5:1.
+   The <head> script also holds the number of palettes, so the two have to agree. */
 :root {
-    --paper: #f2efe8;
-    --ink: #111110;
-    --muted: #5a5850;
-    --highlight: #f2c94c;
-    --accent: #ff7a00;
-    --accent-text: #c95a00;
-    --on-accent: #111110;
+    /* 0 Peach: cream, navy, pink marker, burnt orange */
+    --paper: #fff1e0;
+    --ink: #1b1b3a;
+    --highlight: #ffb3c7;
+    --accent: #c2410c;
+    --muted: var(--ink);
+    --accent-text: var(--accent);
+    --on-accent: var(--paper);
+    /* Cloud colours for the light palettes; the dark ones swap --cloud (see Clouds). */
+    --cloud: color-mix(in srgb, #fff 55%, var(--paper));
+    --cloud-shade: color-mix(in srgb, var(--ink) 4%, var(--cloud));
+    /* Every call to action answers hover and focus the same way: a fill rises from its bottom edge. */
+    --rise: 500ms cubic-bezier(.22, 1, .36, 1);
     --pad: clamp(20px, 4.5vw, 56px);
     --fs: 64px;
-    --display: "Host Grotesk";
+    /* Line weights for the hand, arrows and bracket. scripts.js resets both from the type size. */
+    --stroke: 2px;
+    --hand-sw: 1.6;
+    --display: "Inter";
     --mono: "Martian Mono";
     --mono-w: 400;
     --track: -.04em;
     --maxw: 1600px;
+}
+
+/* 1 Mint: mint, forest green, sunflower marker, raspberry */
+[data-palette="1"] {
+    --paper: #d6f5e3;
+    --ink: #0b3d2e;
+    --highlight: #ffd23f;
+    --accent: #b0154f;
+}
+
+/* 2 Night: midnight, cream, violet marker, coral */
+[data-palette="2"] {
+    --paper: #14122b;
+    --ink: #f5f1e8;
+    --highlight: #5b3fd6;
+    --accent: #ff8a5b;
+}
+
+/* 3 Bubblegum: pink, plum, lemon marker, berry */
+[data-palette="3"] {
+    --paper: #ffd6e8;
+    --ink: #2a0f3d;
+    --highlight: #fff07a;
+    --accent: #a3105f;
+}
+
+/* 4 Cobalt: electric blue, white, magenta marker, butter yellow */
+[data-palette="4"] {
+    --paper: #1a2fd0;
+    --ink: #ffffff;
+    --highlight: #c8004f;
+    --accent: #ffe066;
+}
+
+/* 5 Lilac: lilac, ink violet, lime marker, red */
+[data-palette="5"] {
+    --paper: #e4dbff;
+    --ink: #1d1340;
+    --highlight: #b6f36b;
+    --accent: #b0181b;
+}
+
+/* 6 Forest: deep green, parchment, rust marker, marigold */
+[data-palette="6"] {
+    --paper: #0f2a20;
+    --ink: #f2ecd8;
+    --highlight: #b3360b;
+    --accent: #ffcf4a;
 }
 
 * {
@@ -110,8 +170,211 @@ button {
     display: inline-block;
     min-height: 44px;
     line-height: 44px;
-    text-underline-offset: 4px;
-    text-decoration-thickness: 1px;
+    position: relative;
+    isolation: isolate;
+    text-decoration: none;
+}
+
+/* The underline is a pseudo-element so it can grow: on hover or focus it rises
+   into a marker block behind the word (ink on highlight is 4.5:1+ in every palette). */
+.links a::before {
+    content: "";
+    position: absolute;
+    z-index: -1;
+    left: -4px;
+    right: -4px;
+    bottom: calc(50% - .75em);
+    height: 2px;
+    margin: 0 4px;
+    background: currentColor;
+    transition: height var(--rise), margin var(--rise), background-color 200ms ease;
+}
+
+.links a:hover::before, .links a:focus-visible::before {
+    height: 1.5em;
+    margin: 0;
+    background: var(--highlight);
+}
+
+/* Tools picker: an ink disc in the bottom corner. The panel grows out of it, its one tight
+   corner pointing back at the button. */
+.apps-btn {
+    display: grid;
+    place-items: center;
+    width: 52px;
+    height: 52px;
+    padding: 0;
+    border: 0;
+    border-radius: 50%;
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
+    background: var(--ink);
+    color: var(--paper);
+    cursor: pointer;
+    touch-action: manipulation;
+    transition: background-color 150ms ease, color 200ms ease;
+}
+
+.apps-btn::before {
+    content: "";
+    position: absolute;
+    z-index: -1;
+    inset: auto 0 0;
+    height: 0;
+    background: var(--highlight);
+    transition: height var(--rise);
+}
+
+.apps-btn:hover::before, .apps-btn:focus-visible::before {
+    height: 100%;
+}
+
+.apps-btn:hover, .apps-btn:focus-visible {
+    color: var(--ink);
+}
+
+.apps-btn svg {
+    width: 18px;
+    height: 18px;
+    fill: currentColor;
+    transition: transform 300ms cubic-bezier(.34, 1.5, .64, 1);
+}
+
+.apps-btn:active {
+    transform: translateY(1px);
+}
+
+.apps:has(.apps-panel:popover-open) .apps-btn {
+    background: var(--accent);
+    color: var(--paper);
+}
+
+.apps:has(.apps-panel:popover-open) .apps-btn::before {
+    height: 0;
+}
+
+.apps:has(.apps-panel:popover-open) .apps-btn svg {
+    transform: rotate(45deg);
+}
+
+/* Sits in the top layer, pinned above the button (the page is capped at --maxw and centred). */
+.apps-panel {
+    position: fixed;
+    inset: auto;
+    right: max(var(--pad), (100vw - var(--maxw)) / 2 + var(--pad));
+    bottom: calc(max(var(--pad), env(safe-area-inset-bottom)) + 52px + 12px);
+    width: min(320px, 100vw - 2 * var(--pad));
+    margin: 0;
+    padding: 20px 14px 18px;
+    border: 0;
+    border-radius: 26px 26px 6px 26px;
+    background: var(--ink);
+    color: var(--paper);
+    transform-origin: 100% 100%;
+    opacity: 0;
+    transform: scale(.85);
+    transition: opacity 160ms ease, transform 320ms cubic-bezier(.34, 1.4, .64, 1), overlay 320ms allow-discrete, display 320ms allow-discrete;
+}
+
+.apps-panel:popover-open {
+    opacity: 1;
+    transform: none;
+}
+
+@starting-style {
+    .apps-panel:popover-open {
+        opacity: 0;
+        transform: scale(.85);
+    }
+}
+
+.apps-panel::backdrop {
+    background: transparent;
+}
+
+.apps-panel :focus-visible {
+    outline-color: var(--paper);
+    outline-offset: 0;
+}
+
+.apps-head {
+    padding: 0 8px;
+    font: var(--mono-w) 11px/1.4 var(--mono), ui-monospace, monospace;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+}
+
+.apps-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+    gap: 4px;
+    padding: 12px 0;
+    list-style: none;
+}
+
+.apps-list a {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    padding: 16px 8px 14px;
+    border-radius: 18px;
+    text-decoration: none;
+    text-align: center;
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
+}
+
+.apps-list a::before {
+    content: "";
+    position: absolute;
+    z-index: -1;
+    inset: auto 0 0;
+    height: 0;
+    background: color-mix(in srgb, var(--paper) 14%, transparent);
+    transition: height var(--rise);
+}
+
+.apps-list a:hover::before, .apps-list a:focus-visible::before {
+    height: 100%;
+}
+
+.apps-ico {
+    width: 56px;
+    height: 56px;
+    margin-bottom: 8px;
+    transition: transform 250ms cubic-bezier(.34, 1.5, .64, 1);
+}
+
+.apps-list a:hover .apps-ico, .apps-list a:focus-visible .apps-ico {
+    transform: translateY(-3px) rotate(-4deg);
+}
+
+.apps-name {
+    font: var(--mono-w) 15px/1.3 var(--mono), ui-monospace, monospace;
+}
+
+.apps-name span {
+    color: var(--highlight);
+}
+
+/* Paper on ink: the same pair as the page text, reversed. */
+.apps-desc, .apps-foot {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--paper);
+}
+
+.apps-foot {
+    padding: 0 8px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .apps-btn, .apps-btn::before, .apps-btn svg, .apps-panel, .apps-ico, .links a::before, .apps-list a::before, .boom-btn::before, .reach-label::before, .reach-label {
+        transition: none;
+    }
 }
 
 /* The one toy on the page: a plain outlined button. Pressing it lights a fuse along its bottom edge. */
@@ -128,12 +391,26 @@ button {
     cursor: pointer;
     touch-action: manipulation;
     overflow: visible;
+    isolation: isolate;
     transition: background-color 150ms ease, color 150ms ease, border-color 150ms ease;
 }
 
-.boom-btn:hover {
-    background: var(--ink);
-    color: var(--paper);
+.boom-btn::before {
+    content: "";
+    position: absolute;
+    z-index: -1;
+    inset: auto 0 0;
+    height: 0;
+    background: var(--highlight);
+    transition: height var(--rise);
+}
+
+.boom-btn:hover::before, .boom-btn:focus-visible::before {
+    height: 100%;
+}
+
+.boom-btn.lit::before {
+    height: 0;
 }
 
 .boom-btn:active {
@@ -258,7 +535,7 @@ button {
 
 .hl {
     position: absolute;
-    left: -.04em;
+    left: .02em;
     right: -.02em;
     bottom: .1em;
     height: .36em;
@@ -303,7 +580,10 @@ button {
 }
 
 .brace {
-    stroke-width: var(--stroke, 2px);
+    display: block;
+    width: 100%;
+    height: 22px;
+    stroke-width: var(--stroke);
 }
 
 .lbl {
@@ -315,7 +595,7 @@ button {
     width: calc(var(--hand) * .86);
     height: var(--hand);
     stroke: var(--accent);
-    stroke-width: var(--hand-sw, 1.6);
+    stroke-width: var(--hand-sw);
     stroke-linecap: round;
     stroke-linejoin: round;
     transform-origin: 50% 90%;
@@ -361,12 +641,6 @@ button {
     touch-action: manipulation;
 }
 
-.brace {
-    display: block;
-    width: 100%;
-    height: 22px;
-}
-
 .reach-label {
     display: inline-flex;
     align-items: center;
@@ -377,13 +651,37 @@ button {
     letter-spacing: .08em;
     text-transform: uppercase;
     background: linear-gradient(var(--highlight), var(--highlight)) 0 50% / 100% 1.9em no-repeat;
+    position: relative;
+    isolation: isolate;
+    transition: color 200ms ease;
+}
+
+/* Already on the marker, so its rising fill is ink, and the label turns to paper. */
+.reach-label::before {
+    content: "";
+    position: absolute;
+    z-index: -1;
+    left: 0;
+    right: 0;
+    bottom: calc(50% - .95em);
+    height: 0;
+    background: var(--ink);
+    transition: height var(--rise);
+}
+
+.reach:hover .reach-label, .reach:focus-visible .reach-label {
+    color: var(--paper);
+}
+
+.reach:hover .reach-label::before, .reach:focus-visible .reach-label::before {
+    height: 1.9em;
 }
 
 .copy-ico {
     width: 14px;
     height: 14px;
     fill: none;
-    stroke: var(--ink);
+    stroke: currentColor;
     stroke-width: 1.6;
 }
 
@@ -407,49 +705,28 @@ button {
 }
 
 /* Portrait: .co.uk is short, so its note sits beside it */
-@media not (
+@media not all and (min-width: 760px) and (min-aspect-ratio: 1/1) {
+    .n-place {
+        bottom: auto;
+        top: 50%;
+        left: calc(100% + 10px);
+        transform: translateY(-50%);
+        flex-direction: row;
+        align-items: center;
+    }
 
-(
-min-width:
+    .n-place .down {
+        display: none;
+    }
 
-760
-px
-
-)
-and
-
-(
-min-aspect-ratio:
-
-1
-/
-1
-)
-)
-{
-.n-place {
-    bottom: auto;
-    top: 50%;
-    left: calc(100% + 10px);
-    transform: translateY(-50%);
-    flex-direction: row;
-    align-items: center;
+    .n-place .left {
+        display: block;
+        order: -1;
+    }
 }
-
-.n-place .down {
-    display: none;
-}
-
-.n-place .left {
-    display: block;
-    order: -1;
-}
-
-}
-
 
 /* While the intro runs, the supporting parts wait off stage. */
-body.intro :is(.card, .top > *, .links) {
+body.intro :is(.card, .top > *, .links, .apps) {
     visibility: hidden;
 }
 
@@ -529,35 +806,15 @@ body.greeting .greet {
     overflow: visible;
     fill: none;
     stroke: var(--accent);
-    stroke-width: var(--hand-sw, 1.6);
+    stroke-width: var(--hand-sw);
     stroke-linecap: round;
     stroke-linejoin: round;
 }
 
-@media not (
-
-(
-min-width:
-
-760
-px
-
-)
-and
-
-(
-min-aspect-ratio:
-
-1
-/
-1
-)
-)
-{
-.g-im {
-    flex-basis: 100%;
-}
-
+@media not all and (min-width: 760px) and (min-aspect-ratio: 1/1) {
+    .g-im {
+        flex-basis: 100%;
+    }
 }
 
 /* Hold everything back until the intro starts */
@@ -579,13 +836,14 @@ min-aspect-ratio:
     }
 }
 
-/* Background: faint layout columns */
+/* Background: the bridge, clouds and stars, faded back behind the page. */
 .bg {
     position: fixed;
     inset: 0;
     pointer-events: none;
     z-index: 0;
     overflow: hidden;
+    opacity: .85;
 }
 
 .bg > * {
@@ -593,15 +851,151 @@ min-aspect-ratio:
     inset: 0;
 }
 
-/* Columns run the full width of the screen. The content is capped, so the grid is drawn as one
-   repeating rhythm, positioned so the content's own columns fall exactly on it. */
-.b-cols {
-    --line: rgba(17, 17, 16, .07);
-    --tint: rgba(17, 17, 16, .012);
-    background-image: repeating-linear-gradient(90deg,
-    var(--line) 0 1px,
-    var(--tint) 1px calc(var(--colw, 100px) - 1px),
-    var(--line) calc(var(--colw, 100px) - 1px) var(--colw, 100px),
-    transparent var(--colw, 100px) calc(var(--colw, 100px) + var(--gap, 20px)));
-    background-position: var(--x0, 0px) 0;
+/* The bridge sits along the bottom edge. Every layer is ink mixed into paper, so it recolours
+   with the palette and stays faint enough for text to sit on top. It is sized by the screen's
+   height, so it keeps its proportions everywhere. Wide screens centre it and show more of the
+   ground (drawn far past both edges); narrow screens hold it to the left, so a phone shows the
+   near tower and the deck at a size you can make out. */
+.bg > .b-bridge {
+    --h: clamp(260px, 55svh, 600px);
+    --w: calc(var(--h) * 1916 / 821);
+    inset: auto;
+    bottom: 0;
+    left: max(calc((100% - var(--w)) / 2), calc(var(--h) * -.2));
+    width: var(--w);
+    height: var(--h);
+    overflow: visible;
+}
+
+.b-bridge .t0 {
+    fill: color-mix(in srgb, var(--ink) 3%, var(--paper));
+}
+
+.b-bridge .t1 {
+    fill: color-mix(in srgb, var(--ink) 6%, var(--paper));
+}
+
+.b-bridge .t2 {
+    fill: color-mix(in srgb, var(--ink) 11%, var(--paper));
+}
+
+.b-bridge .t3 {
+    fill: color-mix(in srgb, var(--ink) 9%, var(--paper));
+}
+
+.b-bridge .t4 {
+    fill: color-mix(in srgb, var(--ink) 16%, var(--paper));
+}
+
+.b-bridge .t4s {
+    fill: none;
+    stroke: color-mix(in srgb, var(--ink) 16%, var(--paper));
+}
+
+.b-bridge .t5 {
+    fill: color-mix(in srgb, var(--ink) 12%, var(--paper));
+}
+
+.b-bridge .t6 {
+    fill: color-mix(in srgb, var(--ink) 15%, var(--paper));
+}
+
+.b-bridge .t7 {
+    fill: color-mix(in srgb, var(--ink) 20%, var(--paper));
+}
+
+/* Clouds: on light palettes a white body (set in :root), on dark ones a faint tint of ink
+   (just below). The belly is the body with a touch more ink. Each blows left to right across the whole
+   screen and wraps; its negative delay spreads them out, so the sky is full from the start.
+   A slow bob on top gives each one a little lift and sag as it goes. */
+[data-palette="2"], [data-palette="4"], [data-palette="6"] {
+    --cloud: color-mix(in srgb, var(--ink) 9%, var(--paper));
+}
+
+.cloud {
+    position: absolute;
+    top: var(--y);
+    left: 0;
+    width: calc(clamp(140px, 16vw, 320px) * var(--s));
+    height: auto;
+    overflow: visible;
+    opacity: var(--a, 1);
+    animation: wind var(--d) linear var(--o) infinite, bob var(--b, 14s) ease-in-out var(--o) infinite alternate;
+}
+
+@keyframes wind {
+    from {
+        transform: translateX(-100%);
+    }
+    to {
+        transform: translateX(100vw);
+    }
+}
+
+@keyframes bob {
+    from {
+        translate: 0 -6px;
+        scale: 1;
+    }
+    to {
+        translate: 0 6px;
+        scale: 1.03 .98;
+    }
+}
+
+/* Stars: three groups of dots drawn as shadows, each group twinkling on its own beat.
+   Shown on Night and Forest only. */
+.b-stars {
+    display: none;
+}
+
+[data-palette="2"] .b-stars, [data-palette="6"] .b-stars {
+    display: block;
+}
+
+.b-stars span {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 2px;
+    height: 2px;
+    border-radius: 50%;
+    color: color-mix(in srgb, var(--ink) 70%, transparent);
+    animation: twinkle 3.2s ease-in-out infinite alternate;
+}
+
+.b-stars span:nth-child(1) {
+    box-shadow: 2vw 48svh, 29.8vw 12.5svh, 72vw 28.6svh, 33.6vw 39.6svh, 80.4vw 14.1svh, 37.9vw 37.4svh, 69vw 4.7svh, 67.7vw 25.4svh, 90.6vw 42.4svh, 13.8vw 27.7svh, 63.8vw 30.9svh, 89.6vw 47.4svh, 37.7vw 18.8svh;
+}
+
+.b-stars span:nth-child(2) {
+    width: 3px;
+    height: 3px;
+    animation-duration: 4.6s;
+    animation-delay: -1.5s;
+    box-shadow: 82.4vw 18.6svh, 16.6vw 16.9svh, 43.1vw 16.7svh, 92vw 29.9svh, 72vw 45.9svh, 7.6vw 15.7svh, 55.8vw 27.4svh, 89.3vw 4.7svh, 65.8vw 48.2svh, 51.4vw 10.3svh, 33.9vw 28.6svh, 60.9vw 13.7svh;
+}
+
+.b-stars span:nth-child(3) {
+    width: 1.5px;
+    height: 1.5px;
+    animation-duration: 2.4s;
+    animation-delay: -.8s;
+    box-shadow: 89vw 24.9svh, 84.8vw 33.8svh, 62.9vw 27.8svh, 50.5vw 36.4svh, 92.2vw 21.8svh, 70vw 14.6svh, 58.3vw 19.5svh, 33.7vw 21.6svh, 78.3vw 45.9svh, 12.7vw 43svh, 9.5vw 22.3svh, 16.7vw 5.9svh, 97.6vw 13svh, 62.7vw 9.2svh;
+}
+
+@keyframes twinkle {
+    from {
+        opacity: 1;
+    }
+    to {
+        opacity: .2;
+    }
+}
+
+/* Reduced motion: everything holds still where it is (paused, so the clouds stay spread out). */
+@media (prefers-reduced-motion: reduce) {
+    .cloud, .b-stars span {
+        animation-play-state: paused;
+    }
 }

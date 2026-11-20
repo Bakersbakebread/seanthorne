@@ -5,24 +5,100 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Sean Thorne</title>
 <meta name="description" content="Sean Thorne, Bristol. The human in the loop. Still answers his own email.">
-<meta name="theme-color" content="#f2efe8">
+<meta name="theme-color" content="#fff1e0">
 <meta property="og:title" content="Sean Thorne">
 <meta property="og:description" content="The human in the loop. Still answers his own email.">
 <meta property="og:url" content="https://seanthorne.co.uk/">
 <meta property="og:type" content="website">
+<meta property="og:site_name" content="Sean Thorne">
+<meta property="og:locale" content="en_GB">
+<meta property="og:image" content="https://seanthorne.co.uk/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="hello@seanthorne.co.uk in bold type above a drawing of the Clifton Suspension Bridge.">
+<meta name="twitter:card" content="summary_large_image">
 <link rel="canonical" href="https://seanthorne.co.uk/">
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Host+Grotesk:wght@600;800&family=Martian+Mono:wght@400&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@500;600;800&family=Martian+Mono:wght@400&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="styles.css"/>
+<script>
+  // A new palette on every visit, stepping through all of them in turn. The palettes are in styles.css.
+  // Runs before the body so the page never paints in the wrong colours.
+  (function () {
+    var count = 7, i, root = document.documentElement;
+    try {
+      var last = localStorage.getItem('palette');
+      i = last === null ? 0 : (Number(last) + 1) % count;
+      localStorage.setItem('palette', i);
+    } catch {
+      i = Math.floor(Math.random() * count);
+      // Storage is blocked (private browsing, or cookies turned off), so there is no last
+      // palette to step on from. Pick one at random instead.
+    }
+    root.dataset.palette = i;
+    document.querySelector('meta[name="theme-color"]').content = getComputedStyle(root).getPropertyValue('--paper').trim();
+  })();
+</script>
 </head>
 <body class="is-pending">
-<div class="bg" aria-hidden="true"><div class="b-cols"></div></div>
+<div class="bg" aria-hidden="true">
+  <!-- Stars, for the Night and Forest palettes: three groups that twinkle out of step. -->
+  <div class="b-stars"><span></span><span></span><span></span></div>
+  <!-- Clouds blow across the whole screen, each at its own height, size and speed. -->
+  <div class="b-sky">
+    <!-- Smaller clouds are further away: fainter and slower. Some are mirrored. -->
+    <svg class="cloud" viewBox="0 0 300 120" style="--y: 6%; --s: 1.1; --d: 260s; --o: -13s; --a: 1; --b: 14s"><use href="#cloud-a"/></svg>
+    <svg class="cloud" viewBox="0 0 300 120" style="--y: 14%; --s: .6; --d: 340s; --o: -124s; --a: .7; --b: 11s"><use href="#cloud-c" transform="matrix(-1 0 0 1 300 0)"/></svg>
+    <svg class="cloud" viewBox="0 0 300 120" style="--y: 24%; --s: 1.3; --d: 230s; --o: -96s; --a: 1; --b: 17s"><use href="#cloud-b"/></svg>
+    <svg class="cloud" viewBox="0 0 300 120" style="--y: 3%; --s: 1.2; --d: 300s; --o: -204s; --a: .8; --b: 20s"><use href="#cloud-a"/></svg>
+    <svg class="cloud" viewBox="0 0 300 120" style="--y: 36%; --s: .8; --d: 280s; --o: -126s; --a: .85; --b: 13s"><use href="#cloud-a" transform="matrix(-1 0 0 1 300 0)"/></svg>
+    <svg class="cloud" viewBox="0 0 300 120" style="--y: 18%; --s: .7; --d: 380s; --o: -27s; --a: .6; --b: 22s"><use href="#cloud-c" transform="matrix(-1 0 0 1 300 0)"/></svg>
+    <svg class="cloud" viewBox="0 0 300 120" style="--y: 44%; --s: 1; --d: 250s; --o: -200s; --a: 1; --b: 15s"><use href="#cloud-b" transform="matrix(-1 0 0 1 300 0)"/></svg>
+    <svg class="cloud" viewBox="0 0 300 120" style="--y: 30%; --s: .5; --d: 400s; --o: -330s; --a: .55; --b: 10s"><use href="#cloud-c"/></svg>
+    <svg class="cloud" viewBox="0 0 300 120" style="--y: 9%; --s: .9; --d: 320s; --o: -250s; --a: .75; --b: 19s"><use href="#cloud-b"/></svg>
+  </div>
+  <svg class="b-bridge" viewBox="0 0 1916 821">
+    <defs>
+      <!-- Clouds, three shapes: (a) classic, (b) towering, (c) small puff.
+           Each has a lumpy top, scalloped underside, and a shaded belly clipped to its outline. -->
+      <path id="cs-a" d="M30 95C6 96 2 70 22 62C16 40 46 27 66 40C76 15 116 5 140 25C162 5 206 10 211 40C236 30 270 45 262 68C290 72 292 98 266 100C252 112 226 111 212 102C195 114 160 114 146 104C126 115 96 115 82 104C66 112 40 109 30 95Z"/>
+      <clipPath id="cc-a"><use href="#cs-a"/></clipPath>
+      <g id="cloud-a"><use href="#cs-a" style="fill: var(--cloud)"/><path clip-path="url(#cc-a)" style="fill: var(--cloud-shade)" d="M0 82C50 70 95 88 145 78C195 68 240 88 300 76V120H0Z"/></g>
+      <path id="cs-b" d="M78 104C56 104 52 84 68 76C60 56 80 42 98 50C96 24 120 6 146 14C160 -2 196 4 200 30C222 26 242 46 234 66C256 70 256 98 232 102C220 112 196 112 186 104C170 114 140 114 128 106C112 114 88 112 78 104Z"/>
+      <clipPath id="cc-b"><use href="#cs-b"/></clipPath>
+      <g id="cloud-b"><use href="#cs-b" style="fill: var(--cloud)"/><path clip-path="url(#cc-b)" style="fill: var(--cloud-shade)" d="M0 82C50 70 95 88 145 78C195 68 240 88 300 76V120H0Z"/></g>
+      <path id="cs-c" d="M70 102C50 102 48 82 66 78C64 58 88 48 106 60C116 40 150 38 162 58C180 50 204 62 200 80C222 82 224 102 204 104C190 112 170 110 160 104C144 112 118 112 106 104C94 110 78 108 70 102Z"/>
+      <clipPath id="cc-c"><use href="#cs-c"/></clipPath>
+      <g id="cloud-c"><use href="#cs-c" style="fill: var(--cloud)"/><path clip-path="url(#cc-c)" style="fill: var(--cloud-shade)" d="M0 82C50 70 95 88 145 78C195 68 240 88 300 76V120H0Z"/></g>
+    </defs>
+    <path class="t1" d="M-3000 432H0C320 410 620 416 900 440C1180 404 1560 388 1916 396H4916V821H-3000Z"/>
+    <path class="t0" d="M590 612C980 612 1380 650 1700 700L1916 760V821H690Z"/>
+    <path class="t3" d="M245 606H592L650 700C700 744 755 782 780 821H0V606Z"/>
+    <path class="t3" d="M1625 512H1790L1720 640L1578 682Z"/>
+    <path class="t2" d="M-3000 600H0C230 596 430 630 540 724C590 766 620 798 640 821H-3000Z"/>
+    <path class="t2" d="M1468 742C1590 668 1740 560 1916 500H4916V821H1440Z"/>
+    <g class="t4s" stroke-width="6" stroke-linecap="round">
+      <path d="M498 316Q1150 640 1668 384M498 346Q1150 652 1668 396M340 320L-175 600M340 350L-107 600M1748 398L1870 505M1744 388L1848 505"/>
+      <path stroke-width="4" d="M608 398V562M740 452V555M980 512V543M1400 498V520M1510 470V515M1605 432V510"/>
+    </g>
+    <path class="t4" d="M535 566L1625 506H1780V520L540 580Z"/>
+    <path class="t4" d="M1625 503H1870V512H1625Z"/>
+    <path class="t5" d="M340 282H500L540 592H300Z"/>
+    <path class="t6" d="M420 282H500L540 592H420Z"/>
+    <path class="t4" d="M330 263H506V283H330ZM245 590H580V609H245Z"/>
+    <path class="t7" d="M346 440V400C346 365 362 345 373 345C384 345 400 365 400 400V440ZM342 590V500C342 480 355 468 371 468C387 468 400 480 400 500V590Z"/>
+    <path class="t5" d="M1670 362H1740L1760 508H1650Z"/>
+    <path class="t6" d="M1708 362H1740L1760 508H1708Z"/>
+    <path class="t4" d="M1663 352H1748V363H1663ZM1640 504H1770V512H1640Z"/>
+    <path class="t7" d="M1675 440V420C1675 405 1683 398 1690 398C1697 398 1705 405 1705 420V440ZM1675 505V462C1675 452 1682 446 1690 446C1698 446 1705 452 1705 462V505Z"/>
+  </svg>
+</div>
 
 <div class="greet" aria-hidden="true">
   <div class="g-line"><span class="g-word g-hello"><span class="fl ch"><span class="cap">H</span><span class="low">h</span></span><b class="ch">e</b><b class="ch">l</b><b class="ch">l</b><b class="ch">o</b><span class="g-comma">,</span></span></div>
-  <div class="g-line g-l2"><span class="g-im">I’m&nbsp;</span><span class="g-word g-sean"><span class="fl ch"><span class="cap">S</span><span class="low">s</span></span><b class="ch">e</b><b class="ch">a</b><b class="ch">n</b></span><span class="g-hand"><span class="g-arc"><span class="g-wave"><svg viewBox="0 0 24 28"><g transform="rotate(-18 12 26)"><path d="M8 26 C5 24 3 20 3 16 L3 11 C3 9.5 5.5 9.5 5.5 11 L5.5 14 L5.5 5 C5.5 3.5 8 3.5 8 5 L8 13 L8 3 C8 1.5 10.5 1.5 10.5 3 L10.5 13 L10.5 4 C10.5 2.5 13 2.5 13 4 L13 14 L13 7 C13 5.5 15.5 5.5 15.5 7 L15.5 18 C15.5 22 13 26 9 26 Z"></path><path d="M-1 2 Q-4 5.5 -3 9.5 M1.5 4.5 Q0 7 .5 9"></path></g></svg></span></span></span></div>
+  <div class="g-line g-l2"><span class="g-im">I’m&nbsp;</span><span class="g-word g-sean"><span class="fl ch"><span class="cap">S</span><span class="low">s</span></span><b class="ch">e</b><b class="ch">a</b><b class="ch">n</b></span><span class="g-hand"><span class="g-arc"><span class="g-wave"><svg viewBox="-6 0 24 28"><g transform="rotate(-18 12 26)"><path d="M8 26 C5 24 3 20 3 16 L3 11 C3 9.5 5.5 9.5 5.5 11 L5.5 14 L5.5 5 C5.5 3.5 8 3.5 8 5 L8 13 L8 3 C8 1.5 10.5 1.5 10.5 3 L10.5 13 L10.5 4 C10.5 2.5 13 2.5 13 4 L13 14 L13 7 C13 5.5 15.5 5.5 15.5 7 L15.5 18 C15.5 22 13 26 9 26 Z"></path><path d="M-1 2 Q-4 5.5 -3 9.5 M1.5 4.5 Q0 7 .5 9"></path></g></svg></span></span></span></div>
 </div>
 <main class="page">
   <h1 class="sr">Sean Thorne</h1>
@@ -37,7 +113,7 @@
     <div class="card">
       <a class="email" href="mailto:hello@seanthorne.co.uk" aria-label="Email hello@seanthorne.co.uk">
         <span class="seg seg-hello" aria-hidden="true"><span class="txt"><b class="ch bit">h</b><b class="ch bit">e</b><b class="ch bit">l</b><b class="ch bit">l</b><b class="ch bit">o</b></span>
-          <span class="note n-wave"><span class="label"><svg class="hand bit" viewBox="0 0 24 28"><g transform="rotate(-18 12 26)"><path d="M8 26 C5 24 3 20 3 16 L3 11 C3 9.5 5.5 9.5 5.5 11 L5.5 14 L5.5 5 C5.5 3.5 8 3.5 8 5 L8 13 L8 3 C8 1.5 10.5 1.5 10.5 3 L10.5 13 L10.5 4 C10.5 2.5 13 2.5 13 4 L13 14 L13 7 C13 5.5 15.5 5.5 15.5 7 L15.5 18 C15.5 22 13 26 9 26 Z"></path><path d="M-1 2 Q-4 5.5 -3 9.5 M1.5 4.5 Q0 7 .5 9"></path></g></svg></span><svg class="down bit" viewBox="0 0 14 38"><path d="M7 0 V36" pathLength="1"></path><path d="M2 31 L7 36 L12 31" pathLength="1"></path></svg></span>
+          <span class="note n-wave"><span class="label"><svg class="hand bit" viewBox="-6 0 24 28"><g transform="rotate(-18 12 26)"><path d="M8 26 C5 24 3 20 3 16 L3 11 C3 9.5 5.5 9.5 5.5 11 L5.5 14 L5.5 5 C5.5 3.5 8 3.5 8 5 L8 13 L8 3 C8 1.5 10.5 1.5 10.5 3 L10.5 13 L10.5 4 C10.5 2.5 13 2.5 13 4 L13 14 L13 7 C13 5.5 15.5 5.5 15.5 7 L15.5 18 C15.5 22 13 26 9 26 Z"></path><path d="M-1 2 Q-4 5.5 -3 9.5 M1.5 4.5 Q0 7 .5 9"></path></g></svg></span><svg class="down bit" viewBox="0 0 14 38"><path d="M7 0 V36" pathLength="1"></path><path d="M2 31 L7 36 L12 31" pathLength="1"></path></svg></span>
         </span>
         <span class="seg seg-name" aria-hidden="true"><b class="ch bit at">@</b><span class="txt"><span class="word"><span class="hl bit"></span><b class="ch bit sean">s</b><b class="ch bit sean">e</b><b class="ch bit sean">a</b><b class="ch bit sean">n</b><b class="ch bit thorne">t</b><b class="ch bit thorne">h</b><b class="ch bit thorne">o</b><b class="ch bit thorne">r</b><b class="ch bit thorne">n</b><b class="ch bit thorne">e</b></span></span>
           <span class="note n-me"><span class="label"><span class="lbl bit">That’s me!</span></span><svg class="down bit" viewBox="0 0 14 38"><path d="M7 0 V36" pathLength="1"></path><path d="M2 31 L7 36 L12 31" pathLength="1"></path></svg></span>
@@ -60,6 +136,31 @@
       <a class="bit" href="https://www.linkedin.com/in/sean-thorne-70429b80/">LinkedIn</a>
       <a class="bit" href="https://github.com/bakersbakebread">GitHub</a>
     </nav>
+    <div class="apps">
+      <button class="apps-btn" type="button" popovertarget="apps-panel" aria-label="Tools">
+        <svg viewBox="0 0 16 16" aria-hidden="true"><circle cx="2.5" cy="2.5" r="1.8"/><circle cx="8" cy="2.5" r="1.8"/><circle cx="13.5" cy="2.5" r="1.8"/><circle cx="2.5" cy="8" r="1.8"/><circle cx="8" cy="8" r="1.8"/><circle cx="13.5" cy="8" r="1.8"/><circle cx="2.5" cy="13.5" r="1.8"/><circle cx="8" cy="13.5" r="1.8"/><circle cx="13.5" cy="13.5" r="1.8"/></svg>
+      </button>
+      <div class="apps-panel" id="apps-panel" popover aria-label="Tools">
+        <p class="apps-head">Tools</p>
+        <ul class="apps-list">
+          <li><a href="https://diff.seanthorne.co.uk/">
+            <svg class="apps-ico" viewBox="0 0 32 32" aria-hidden="true"><rect width="32" height="32" rx="9" fill="var(--highlight)"/><rect x="15" y="6" width="2" height="20" fill="var(--ink)"/><rect x="6" y="11" width="6" height="2.5" fill="var(--ink)"/><rect x="20" y="18.5" width="6" height="2.5" fill="var(--accent)"/></svg>
+            <span class="apps-name">diff<span>.</span></span>
+            <span class="apps-desc">Compare two texts</span>
+          </a></li>
+          <li><a href="https://drop.seanthorne.co.uk/">
+            <svg class="apps-ico" viewBox="0 0 32 32" aria-hidden="true"><rect width="32" height="32" rx="9" fill="var(--accent)"/><rect x="8" y="9" width="16" height="2.5" fill="var(--paper)"/><rect x="8" y="15" width="16" height="2.5" fill="var(--paper)"/><circle cx="20.5" cy="23" r="3" fill="var(--ink)"/></svg>
+            <span class="apps-name">drop<span>.</span></span>
+            <span class="apps-desc">Send between devices</span>
+          </a></li>
+          <li><a href="https://json.seanthorne.co.uk/">
+            <svg class="apps-ico" viewBox="0 0 32 32" aria-hidden="true"><rect width="32" height="32" rx="9" fill="var(--paper)"/><path d="M12.5 7.5h-1.5q-2 0-2 2v3.5q0 3-2.5 3q2.5 0 2.5 3v3.5q0 2 2 2h1.5M19.5 7.5h1.5q2 0 2 2v3.5q0 3 2.5 3q-2.5 0-2.5 3v3.5q0 2-2 2h-1.5" fill="none" stroke="var(--ink)" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/><circle cx="16" cy="16" r="2.5" fill="var(--accent)"/></svg>
+            <span class="apps-name">json<span>.</span></span>
+            <span class="apps-desc">Validate and format JSON</span>
+          </a></li>
+        </ul>
+      </div>
+    </div>
   </div>
 </main>
 <script src="scripts.js"></script>

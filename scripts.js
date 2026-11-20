@@ -34,13 +34,13 @@
         const m = ctx.measureText(ch);
         return {
             lsb: -m.actualBoundingBoxLeft,
-            rsb: m.width + fs * parseFloat(css('--track')) - m.actualBoundingBoxRight
+            rsb: m.width + fs * Number.parseFloat(css('--track')) - m.actualBoundingBoxRight
         };
     };
 
     const firstLast = seg => {
         const t = [...seg.querySelectorAll('.ch')].filter(c => !c.closest('.im')).map(c => (c.querySelector('.lo') || c).textContent);
-        return [t[0], t[t.length - 1]];
+        return [t[0], t.at(-1)];
     };
 
     function grid() {
@@ -59,11 +59,11 @@
         const gridInfo = grid();
         const segs = findAll('.seg');
         const rows = wide() ? [segs] : segs.map(s => [s]);
-        const fs = parseFloat(getComputedStyle(card).getPropertyValue('--fs')) || 64;
+        const fs = Number.parseFloat(getComputedStyle(card).getPropertyValue('--fs')) || 64;
         // Ink width of the widest row at the current size.
         const ink = rows.map(r => {
             const box = r.reduce((w, s) => w + s.getBoundingClientRect().width, 0);
-            const [a] = firstLast(r[0]), [, z] = firstLast(r[r.length - 1]);
+            const [a] = firstLast(r[0]), [, z] = firstLast(r.at(-1));
             return box - glyph(a, fs).lsb - glyph(z, fs).rsb;
         });
 
@@ -87,7 +87,6 @@
         }
         snapNotes(gridInfo);
         setStrokes(next);
-        buildCols();
     }
 
     function snapNotes(g) {
@@ -104,23 +103,11 @@
         });
     }
 
-    // Columns: 12 on wide screens, 4 on phones
-    // Columns: 12 across the content on wide screens, 4 on phones; the rhythm repeats to the screen edges.
-    function buildCols() {
-        const g = grid();
-        const bg = findEl('.b-cols');
-        bg.style.setProperty('--colw', g.colW + 'px');
-        bg.style.setProperty('--gap', GAP + 'px');
-        bg.style.setProperty('--x0', (g.edges[0] % (g.colW + GAP)) + 'px');
-    }
-
-    buildCols();
-
 
     // Copy
     const reachText = findEl('.reach-text'), status = findEl('#status');
     let copyT;
-    findEl('.reach').addEventListener('click', () => {
+    findEl('.reach').addEventListener('click', async () => {
         const done = (label, msg) => {
             reachText.textContent = label;
             status.textContent = msg;
@@ -134,16 +121,17 @@
                 const s = getSelection();
                 s.removeAllRanges();
                 s.addRange(r);
-            } catch (e) {
-                // ignore
+            } catch {
+                // Selecting is already the fallback; if the browser refuses that too there is
+                // nothing left to try, and the label below still answers the click.
             }
             done('Selected, copy away', 'Email address selected');
         };
         try {
-            navigator.clipboard
-                .writeText('hello@seanthorne.co.uk')
-                .then(() => done('Copied, speak soon', 'Email address copied'), fallback);
-        } catch (e) {
+            await navigator.clipboard.writeText('hello@seanthorne.co.uk');
+            done('Copied, speak soon', 'Email address copied');
+        } catch {
+            // No clipboard access (an insecure page, or permission refused): select the address instead.
             fallback();
         }
     });
@@ -165,10 +153,10 @@
         anims.forEach(a => {
             try {
                 a.finish();
-                a.cancel();
-            } catch (x) {
-                // ignore
+            } catch {
+                // finish() throws for an animation with no end to jump to; cancelling it is enough.
             }
+            a.cancel();
         });
         anims = [];
         body.classList.remove('intro', 'greeting');
@@ -176,7 +164,7 @@
         Object.assign(findEl('.g-hand').style, {position: '', left: '', top: '', marginLeft: ''});
         removeEventListener('pointerdown', finishIntro);
         // A tap that skips the intro must not also press whatever is under the finger.
-        if (e && e.type === 'pointerdown') {
+        if (e?.type === 'pointerdown') {
             const eat = ev => {
                 ev.preventDefault();
                 ev.stopPropagation();
@@ -197,7 +185,7 @@
     const WAVE = [{rotate: '0deg'}, {rotate: '-20deg'}, {rotate: '16deg'}, {rotate: '-14deg'}, {rotate: '10deg'}, {rotate: '-5deg'}, {rotate: '0deg'}];
 
     function wave() {
-        if (reduce || exploded || (waving && waving.playState === 'running')) return;
+        if (reduce || exploded || waving?.playState === 'running') return;
         waving = hand.animate(WAVE, {duration: 1400, easing: 'ease-in-out'});
     }
 
@@ -210,7 +198,7 @@
     }
 
     const run = (el, kf, o) => {
-        const a = el.animate(kf, Object.assign({fill: 'both'}, o));
+        const a = el.animate(kf, {fill: 'both', ...o});
         anims.push(a);
         return a;
     };
@@ -223,7 +211,7 @@
         addEventListener('pointerdown', finishIntro);
 
         const vw = innerWidth, vh = innerHeight;
-        const fs = parseFloat(getComputedStyle(card).getPropertyValue('--fs'));
+        const fs = Number.parseFloat(getComputedStyle(card).getPropertyValue('--fs'));
         const box = el => el.getBoundingClientRect();
 
         // Where each traveller lands (the address is laid out, only hidden).
@@ -330,7 +318,7 @@
         timers.push(setTimeout(() => {
             if (!intro) return;
             const base = HELLO_GO;
-            const r = (el, kf, o) => run(el, kf, Object.assign({fill: 'backwards', easing: EASE_IN}, o));
+            const r = (el, kf, o) => run(el, kf, {fill: 'backwards', easing: EASE_IN, ...o});
             // Landings: hello and sean together when sean lands; the hand on its own landing.
             const show = (el, t) => run(el, [{opacity: 0}, {opacity: 1}], {
                 delay: t - base,
@@ -392,7 +380,7 @@
                 opacity: 1,
                 transform: 'none'
             }], {delay: L + 500, duration: 400});
-            findAll('.top > *, .links').forEach(el => r(el, [{opacity: 0}, {opacity: 1}], {
+            findAll('.top > *, .links, .apps').forEach(el => r(el, [{opacity: 0}, {opacity: 1}], {
                 delay: L + 300,
                 duration: 400,
                 easing: 'ease-out'
@@ -548,7 +536,7 @@
     function stopFuse() {
         if (!fuse) return;
         fuse.timers.forEach(clearTimeout);
-        [fuse.burn, fuse.ride, fuse.flicker, fuse.shake].forEach(a => a && a.cancel());
+        [fuse.burn, fuse.ride, fuse.flicker, fuse.shake].forEach(a => a?.cancel());
         fuse = null;
         btn.classList.remove('lit');
     }
@@ -570,7 +558,6 @@
     });
 
     addEventListener('resize', () => {
-        buildCols();
         if (!exploded) fit();
     });
    
@@ -579,15 +566,19 @@
     const fontsIn = document.fonts
         ? Promise.all([document.fonts.load(`800 64px ${css('--display')}`), document.fonts.load(`${css('--mono-w')} 12px ${css('--mono')}`)]).then(() => document.fonts.ready)
         : Promise.resolve();
-    const archivoReady = () => !document.fonts || document.fonts.check(`800 64px ${css('--display')}`);
-    const fontsSettled = Promise.race([fontsIn.then(async () => {
-        for (let i = 0; i < 25 && !archivoReady(); i++) await wait(100);
-    }), wait(2500)]);
-    fontsSettled.then(() => {
+    const displayReady = () => !document.fonts || document.fonts.check(`800 64px ${css('--display')}`);
+    // Check every 100ms, up to 25 times, until the display face is usable.
+    const untilDisplayReady = (tries = 25) => displayReady() || tries === 0
+        ? Promise.resolve()
+        : wait(100).then(() => untilDisplayReady(tries - 1));
+    const fontsSettled = Promise.race([fontsIn.then(() => untilDisplayReady()), wait(2500)]);
+    // If a font fails to load, start anyway and lay out on the fallback face.
+    const start = () => {
         fit();
         fit();
         playIntro();
-    });
+    };
+    fontsSettled.then(start, start);
     if (document.fonts) document.fonts.addEventListener('loadingdone', () => {
         if (exploded) return;
         if (intro) refit = true; else fit();

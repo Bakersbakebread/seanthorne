@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="robots" content="noindex">
+<title>Embed card source</title>
+<!-- The card shown when the site is shared. /og-image.png is a headless Chrome screenshot of this
+     page at 1200x630:
+       chrome --headless=new --hide-scrollbars --window-size=1200,630 --virtual-time-budget=3000 \
+              --screenshot=og-image.png og/card.html
+     It uses the Peach palette, and the bridge paths are a copy of the ones in index.html. -->
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@600;800&family=Martian+Mono:wght@400&display=swap" rel="stylesheet">
+<style>
+    :root {
+        --paper: #fff1e0;
+        --ink: #1b1b3a;
+        --highlight: #ffb3c7;
+        --accent: #c2410c;
+    }
+
+    * { box-sizing: border-box; margin: 0; }
+
+    body {
+        position: relative;
+        width: 1200px;
+        height: 630px;
+        overflow: hidden;
+        padding: 64px 72px;
+        background: var(--paper);
+        color: var(--ink);
+        font-family: "Inter", sans-serif;
+    }
+
+    .bridge {
+        position: absolute;
+        left: 50%;
+        bottom: 0;
+        height: 330px;
+        width: calc(330px * 1916 / 821);
+        translate: -50% 0;
+        overflow: visible;
+    }
+
+    .t0 { fill: color-mix(in srgb, var(--ink) 3%, var(--paper)); }
+    .t1 { fill: color-mix(in srgb, var(--ink) 6%, var(--paper)); }
+    .t2 { fill: color-mix(in srgb, var(--ink) 11%, var(--paper)); }
+    .t3 { fill: color-mix(in srgb, var(--ink) 9%, var(--paper)); }
+    .t4 { fill: color-mix(in srgb, var(--ink) 16%, var(--paper)); }
+    .t4s { fill: none; stroke: color-mix(in srgb, var(--ink) 16%, var(--paper)); }
+    .t5 { fill: color-mix(in srgb, var(--ink) 12%, var(--paper)); }
+    .t6 { fill: color-mix(in srgb, var(--ink) 15%, var(--paper)); }
+    .t7 { fill: color-mix(in srgb, var(--ink) 20%, var(--paper)); }
+
+    .top {
+        position: relative;
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+    }
+
+    .line {
+        font-weight: 600;
+        font-size: 30px;
+        line-height: 1.3;
+    }
+
+    .mark {
+        width: 64px;
+        height: 64px;
+    }
+
+    .address {
+        position: relative;
+        margin-top: 92px;
+        font-weight: 800;
+        font-size: 94px;
+        line-height: 1;
+        letter-spacing: -.04em;
+        white-space: nowrap;
+    }
+
+    .at { color: var(--accent); }
+
+    .name {
+        position: relative;
+        isolation: isolate;
+    }
+
+    .name::before {
+        content: "";
+        position: absolute;
+        z-index: -1;
+        left: .02em;
+        right: -.02em;
+        bottom: .1em;
+        height: .36em;
+        background: var(--highlight);
+    }
+
+    .place {
+        position: relative;
+        margin-top: 28px;
+        font: 400 18px/1 "Martian Mono", monospace;
+        letter-spacing: .08em;
+        text-transform: uppercase;
+    }
+
+    .place::before {
+        content: "";
+        display: inline-block;
+        width: 26px;
+        height: 2.6px;
+        margin: 0 12px 5px 0;
+        border-radius: 2px;
+        background: var(--accent);
+        vertical-align: middle;
+    }
+</style>
+</head>
+<body>
+<svg class="bridge" viewBox="0 0 1916 821" aria-hidden="true">
+    <path class="t1" d="M-3000 432H0C320 410 620 416 900 440C1180 404 1560 388 1916 396H4916V821H-3000Z"/>
+    <path class="t0" d="M590 612C980 612 1380 650 1700 700L1916 760V821H690Z"/>
+    <path class="t3" d="M245 606H592L650 700C700 744 755 782 780 821H0V606Z"/>
+    <path class="t3" d="M1625 512H1790L1720 640L1578 682Z"/>
+    <path class="t2" d="M-3000 600H0C230 596 430 630 540 724C590 766 620 798 640 821H-3000Z"/>
+    <path class="t2" d="M1468 742C1590 668 1740 560 1916 500H4916V821H1440Z"/>
+    <g class="t4s" stroke-width="6" stroke-linecap="round">
+      <path d="M498 316Q1150 640 1668 384M498 346Q1150 652 1668 396M340 320L-175 600M340 350L-107 600M1748 398L1870 505M1744 388L1848 505"/>
+      <path stroke-width="4" d="M608 398V562M740 452V555M980 512V543M1400 498V520M1510 470V515M1605 432V510"/>
+    </g>
+    <path class="t4" d="M535 566L1625 506H1780V520L540 580Z"/>
+    <path class="t4" d="M1625 503H1870V512H1625Z"/>
+    <path class="t5" d="M340 282H500L540 592H300Z"/>
+    <path class="t6" d="M420 282H500L540 592H420Z"/>
+    <path class="t4" d="M330 263H506V283H330ZM245 590H580V609H245Z"/>
+    <path class="t7" d="M346 440V400C346 365 362 345 373 345C384 345 400 365 400 400V440ZM342 590V500C342 480 355 468 371 468C387 468 400 480 400 500V590Z"/>
+    <path class="t5" d="M1670 362H1740L1760 508H1650Z"/>
+    <path class="t6" d="M1708 362H1740L1760 508H1708Z"/>
+    <path class="t4" d="M1663 352H1748V363H1663ZM1640 504H1770V512H1640Z"/>
+    <path class="t7" d="M1675 440V420C1675 405 1683 398 1690 398C1697 398 1705 405 1705 420V440ZM1675 505V462C1675 452 1682 446 1690 446C1698 446 1705 452 1705 462V505Z"/>
+</svg>
+<div class="top">
+    <p class="line">The human in the loop.<br>Still answers his own email.</p>
+    <img class="mark" src="../favicon.svg" alt="">
+</div>
+<p class="address">hello<span class="at">@</span><span class="name">seanthorne</span>.co.uk</p>
+<p class="place">Bristol, UK</p>
+</body>
+</html>
